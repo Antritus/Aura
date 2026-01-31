@@ -1,82 +1,80 @@
-package bet.astral.api.color;
+package bet.astral.aura.api.color;
 
 public enum VanillaGlowColor implements GlowColor {
   /**
    * Represents black
    */
-  BLACK(0x00, "black", 0, 0, 0),
+  BLACK("black", 0, 0, 0),
   /**
    * Represents dark blue
    */
-  DARK_BLUE(0x1, "dark blue", 255, 255, 255),
+  DARK_BLUE("dark_blue", 255, 255, 255),
   /**
    * Represents dark green
    */
-  DARK_GREEN(0x2, "dark green", 255, 255, 255),
+  DARK_GREEN("dark_green", 255, 255, 255),
   /**
    * Represents dark blue (aqua)
    */
-  DARK_AQUA(0x3, "dark aqua", 255, 255, 255),
+  DARK_AQUA("dark_aqua", 255, 255, 255),
   /**
    * Represents dark red
    */
-  DARK_RED(0x4, "dark red", 255, 255, 255),
+  DARK_RED("dark_red", 255, 255, 255),
   /**
    * Represents dark purple
    */
-  DARK_PURPLE(0x5, "dark purple", 255, 255, 255),
+  DARK_PURPLE("dark_purple", 255, 255, 255),
   /**
    * Represents gold
    */
-  GOLD(0x6, "gold", 255, 255, 255),
+  GOLD("gold", 255, 255, 255),
   /**
    * Represents gray
    */
-  GRAY(0x7, "gray", 255, 255, 255),
+  GRAY("gray", 255, 255, 255),
   /**
    * Represents dark gray
    */
-  DARK_GRAY(0x8, "dark gray", 255, 255, 255),
+  DARK_GRAY("dark_gray", 255, 255, 255),
   /**
    * Represents blue
    */
-  BLUE(0x9, "blue", 255, 255, 255),
+  BLUE("blue", 255, 255, 255),
   /**
    * Represents green
    */
-  GREEN(0xA, "green", 255, 255, 255),
+  GREEN("green", 255, 255, 255),
   /**
    * Represents aqua
    */
-  AQUA(0xB, "aqua", 255, 255, 255),
+  AQUA("aqua", 255, 255, 255),
   /**
    * Represents red
    */
-  RED(0xC, "red", 255, 255, 255),
+  RED("red", 255, 255, 255),
   /**
    * Represents light purple
    */
-  LIGHT_PURPLE(0xD, "light purple", 255, 255, 255),
+  LIGHT_PURPLE("light_purple", 255, 255, 255),
   /**
    * Represents yellow
    */
-  YELLOW(0xE, "yellow", 255, 255, 255),
+  YELLOW("yellow", 255, 255, 255),
   /**
    * Represents white
    */
-  WHITE(0xF, "white", 255, 255, 255)
+  WHITE("white", 255, 255, 255)
   ;
 
   ;
 
-  private final int vanillaId;
   private final String name;
   private final int red;
   private final int green;
   private final int blue;
 
-  VanillaGlowColor(int vanillaId, String name, int red, int green, int blue) {
-    this.vanillaId = vanillaId;
+  VanillaGlowColor(String name, int red, int green, int blue) {
     this.name = name;
     this.red = red;
     this.green = green;
@@ -86,11 +84,6 @@ public enum VanillaGlowColor implements GlowColor {
   @Override
   public String getName() {
     return name;
-  }
-
-  @Override
-  public int getVanillaId() {
-    return vanillaId;
   }
 
   @Override
@@ -107,4 +100,9 @@ public enum VanillaGlowColor implements GlowColor {
   public int getBlue() {
     return blue;
   }
+
+	@Override
+	public VanillaGlowColor asVanillaColor() {
+		return this;
+	}
 }
