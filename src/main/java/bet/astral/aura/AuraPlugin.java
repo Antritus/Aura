@@ -5,7 +5,10 @@ import bet.astral.aura.api.AuraInternal;
 import bet.astral.aura.api.color.VanillaGlowColor;
 import bet.astral.aura.api.user.AuraUser;
 import bet.astral.aura.api.user.GlowInfo;
+import bet.astral.aura.gui.GlowGUI;
 import bet.astral.aura.user.UserProvider;
+import bet.astral.guiman.GUIMan;
+import bet.astral.guiman.gui.builders.InventoryGUIBuilder;
 import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
 import io.papermc.paper.event.packet.PlayerChunkLoadEvent;
 import org.bukkit.Bukkit;
@@ -28,6 +31,7 @@ import java.util.List;
 import java.util.Random;
 
 public class AuraPlugin extends JavaPlugin implements Listener {
+	private GlowGUI glowGUI;
 	private static final Logger log = LoggerFactory.getLogger(AuraPlugin.class);
 	private final UserProvider userProvider = new UserProvider(this);
 	Random rand = new Random();
@@ -38,6 +42,8 @@ public class AuraPlugin extends JavaPlugin implements Listener {
 
 	@Override
 	public void onEnable() {
+		GUIMan.init(this);
+		InventoryGUIBuilder.throwExceptionIfMessengerNull = false;
 		Class<? extends Aura> auraClass = findAura();
 		if (auraClass == null) {
 			getLogger().warning("Aura does not support version: " + Bukkit.getMinecraftVersion());
@@ -49,11 +55,22 @@ public class AuraPlugin extends JavaPlugin implements Listener {
 			Aura aura = auraClass.getConstructor().newInstance();
 			AuraInternal internal =  (AuraInternal) aura;
 			internal.registerUserProvider(userProvider);
-
+			glowGUI = new GlowGUI(userProvider, aura);
 		} catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
-
+		getServer().getCommandMap().register(
+			"aura",
+			new BukkitCommand("glowmenu") {
+				@Override
+				public boolean execute(CommandSender sender,
+									   String label,
+									   String[] args) {
+					glowGUI.open((Player) sender);
+					return true;
+				}
+			}
+		);
 		getServer().getCommandMap().register(
 			"aura",
 			new BukkitCommand("glow") {

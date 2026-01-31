@@ -11,10 +11,18 @@ plugins {
 
 java.disableAutoTargetJvm() // Allow consuming JVM 21 projects (i.e. paper_1_21_8) even though our release is 17
 
+repositories {
+	maven("https://jitpack.io")
+}
+
 dependencies {
   compileOnly("io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT")
 
-  implementation(project(":api"))
+	implementation("com.github.AstralLiteratureClub:MoreForJava:1.0.2")
+	implementation("com.github.AstralLiteratureClub:MessageManager:2.4.1")
+	implementation("com.github.AstralLiteratureClub:GUIMan:1.3.1-6")
+
+	implementation(project(":api"))
 
   // Shade the reobf variant
   runtimeOnly(project(":paper_1_17_1", configuration = "reobf"))
