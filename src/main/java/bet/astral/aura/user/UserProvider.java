@@ -2,7 +2,8 @@ package bet.astral.aura.user;
 
 import bet.astral.aura.api.user.AuraUser;
 import bet.astral.aura.api.user.AuraUserProvider;
-import bet.astral.aura.AuraPlugin;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -10,10 +11,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 public class UserProvider implements AuraUserProvider {
+	private final Int2ObjectMap<UUID> entityIdToUuid = new Int2ObjectOpenHashMap<>();
 	private final Map<UUID, AuraUser> users = new HashMap<UUID, AuraUser>();
 
-	public UserProvider(AuraPlugin auraPlugin) {
 
+	@Override
+	public Int2ObjectMap<UUID> getEntityIdMap() {
+		return entityIdToUuid;
 	}
 
 	@Override

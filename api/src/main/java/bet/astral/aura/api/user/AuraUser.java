@@ -43,11 +43,29 @@ public interface AuraUser extends Tickable {
 		}
 	}
 
+	default void update(GlobalGlowInfo globalGlowInfo) {
+		if (globalGlowInfo.getTicksLeft() == 0) {
+			revealGlobalGlow(Bukkit.getEntity(globalGlowInfo.getEntityId()));
+			return;
+		}
+	}
+
 	GlowInfo getGlowInfo(@NotNull Entity entity);
+	GlowInfo getGlowInfo(@NotNull UUID entity);
 
 	void setGlobalColor(GlowColor color);
 	GlowColor getGlobalColor();
 	boolean hasGlobalGlow();
 	void enableGlobalGlow();
 	void disableGlobalGlow();
+
+	void hideGlobalGlow(Entity entity, int ticks);
+	default void hideGlobalGlow(Entity entity) {
+		hideGlobalGlow(entity, -1);
+	}
+	void revealGlobalGlow(Entity entity);
+
+	boolean hasPrivateGlow(UUID entity);
+	boolean hasGlobalGlow(UUID viewer);
+	boolean hasDisabledGlobalGlow(UUID viewer);
 }

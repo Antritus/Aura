@@ -43,6 +43,15 @@ public class GlowGUI {
 			.clickable(25, globalColor(Material.GRAY_WOOL, VanillaGlowColor.DARK_GRAY))
 			.clickable(28, globalColor(Material.LIGHT_GRAY_WOOL, VanillaGlowColor.GRAY))
 			.clickable(29, globalColor(Material.WHITE_WOOL, VanillaGlowColor.WHITE))
+
+			.clickable(51, Clickable.builder(Material.ENDER_PEARL).actionGeneral(context->{
+				Player p = context.getWho();
+				aura.hideGlobalGlow(p, p);
+			}))
+			.clickable(52, Clickable.builder(Material.ENDER_EYE).actionGeneral(context->{
+				Player p = context.getWho();
+				aura.revealGlobalGlow(p, p);
+			}))
 			;
 		builder.build().open(player);
 	}
@@ -51,6 +60,7 @@ public class GlowGUI {
 		return clickable(material, color, (context)->{
 			Player player = context.getWho();
 			aura.setGlobalGlow(player, color);
+			player.sendMessage("Enabled glow: "+ color.getName());
 		});
 	}
 	public Clickable clickable(Material material, GlowColor color, ClickAction action) {

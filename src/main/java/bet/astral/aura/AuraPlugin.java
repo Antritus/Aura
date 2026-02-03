@@ -3,63 +3,73 @@ package bet.astral.aura;
 import bet.astral.aura.api.Aura;
 import bet.astral.aura.api.AuraInternal;
 import bet.astral.aura.api.color.VanillaGlowColor;
+import bet.astral.aura.api.internal.AuraNettyInjector;
 import bet.astral.aura.api.user.AuraUser;
-import bet.astral.aura.api.user.GlowInfo;
+import bet.astral.aura.api.user.AuraUserProvider;
 import bet.astral.aura.gui.GlowGUI;
 import bet.astral.aura.user.UserProvider;
 import bet.astral.guiman.GUIMan;
 import bet.astral.guiman.gui.builders.InventoryGUIBuilder;
-import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
-import io.papermc.paper.event.packet.PlayerChunkLoadEvent;
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Random;
 
 public class AuraPlugin extends JavaPlugin implements Listener {
-	private GlowGUI glowGUI;
-	private static final Logger log = LoggerFactory.getLogger(AuraPlugin.class);
-	private final UserProvider userProvider = new UserProvider(this);
-	Random rand = new Random();
+	public static void init(JavaPlugin plugin) {
+		aura = new CoreAura();
+		internal = null;
+		injector = null;
 
-	@Override
-	public void onDisable() {
-	}
-
-	@Override
-	public void onEnable() {
-		GUIMan.init(this);
-		InventoryGUIBuilder.throwExceptionIfMessengerNull = false;
-		Class<? extends Aura> auraClass = findAura();
+		Class<? extends AuraInternal> auraClass = findAura();
+		Class<? extends AuraNettyInjector> nettyClass = findInjector();
 		if (auraClass == null) {
-			getLogger().warning("Aura does not support version: " + Bukkit.getMinecraftVersion());
-			setEnabled(false);
+			plugin.getLogger().severe("");
+			plugin.getLogger().severe("Aura does not support version: " + Bukkit.getMinecraftVersion());
+			plugin.getLogger().severe("Aura does not support version: " + Bukkit.getBukkitVersion());
+			plugin.getLogger().severe("");
+			plugin.setEnabled(false);
 			return;
 		}
 
 		try {
-			Aura aura = auraClass.getConstructor().newInstance();
-			AuraInternal internal =  (AuraInternal) aura;
+			internal = auraClass.getConstructor().newInstance();
 			internal.registerUserProvider(userProvider);
-			glowGUI = new GlowGUI(userProvider, aura);
 		} catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
-		getServer().getCommandMap().register(
+
+		try {
+			injector = nettyClass.getConstructor().newInstance();
+		} catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+
+		aura.registerAuraInternal(internal);
+		aura.registerUserProvider(userProvider);
+
+		plugin.getServer().getPluginManager().registerEvents(new NettyManager(plugin, userProvider, injector), plugin);
+		plugin.getServer().getPluginManager().registerEvents(new EntityManager(plugin, internal, aura, userProvider), plugin);
+	}
+	public static void initGlowPlugin(JavaPlugin plugin) {
+		if (!plugin.isEnabled()){
+			return;
+		}
+		GUIMan.init(plugin);
+		InventoryGUIBuilder.throwExceptionIfMessengerNull = false;
+
+		glowGUI = new GlowGUI(userProvider, aura);
+
+		plugin.getServer().getCommandMap().register(
 			"aura",
 			new BukkitCommand("glowmenu") {
 				@Override
@@ -71,7 +81,7 @@ public class AuraPlugin extends JavaPlugin implements Listener {
 				}
 			}
 		);
-		getServer().getCommandMap().register(
+		plugin.getServer().getCommandMap().register(
 			"aura",
 			new BukkitCommand("glow") {
 				@Override
@@ -89,7 +99,28 @@ public class AuraPlugin extends JavaPlugin implements Listener {
 				}
 			}
 		);
-		getServer().getCommandMap().register(
+		plugin.getServer().getCommandMap().register(
+			"aura",
+			new BukkitCommand("auraversion") {
+				@Override
+				public boolean execute(CommandSender sender,
+									   String label,
+									   String[] args) {
+					sender.sendMessage("");
+					sender.sendMessage("Bukkit Version: " + Bukkit.getBukkitVersion());
+					sender.sendMessage("Minecraft Version: " + Bukkit.getMinecraftVersion());
+					sender.sendMessage("Aura Internal Version: " + internal.getUsedInternalVersion());
+					sender.sendMessage("Aura Provider: " + internal.getClass().getName());
+					sender.sendMessage("Aura Version: " + Bukkit.getBukkitVersion());
+					sender.sendMessage("Author(s): ");
+					sender.sendMessage(" - Laakkonen A.");
+					sender.sendMessage("");
+
+					return true;
+				}
+			}
+		);
+		plugin.getServer().getCommandMap().register(
 			"aura",
 			new BukkitCommand("unglow") {
 				@Override
@@ -106,7 +137,7 @@ public class AuraPlugin extends JavaPlugin implements Listener {
 			}
 		);
 
-		getServer().getCommandMap().register(
+		plugin.getServer().getCommandMap().register(
 			"aura",
 			new BukkitCommand("listentities") {
 				@Override
@@ -129,83 +160,86 @@ public class AuraPlugin extends JavaPlugin implements Listener {
 				}
 			}
 		);
+		plugin.getServer().getCommandMap().register(
+			"aura",
+			new BukkitCommand("test") {
+				@Override
+				public boolean execute(CommandSender sender,
+									   String label,
+									   String[] args) {
+					new Test().run(plugin, (Player) sender);
+					return true;
+				}
+			}
+		);
+	}
+	static Aura aura;
+	static AuraInternal internal;
+	static AuraNettyInjector injector;
+	static GlowGUI glowGUI;
+	static final UserProvider userProvider = new UserProvider();
+	static Random rand = new Random();
 
-		getServer().getPluginManager().registerEvents(this, this);
+	@Override
+	public void onDisable() {
+	}
+
+	@Override
+	public void onEnable() {
+		init(this);
+		initGlowPlugin(this);
+
 		getLogger().info("Aura has enabled!");
 	}
 
-	public Class<? extends Aura> findAura() {
+	public static @Nullable Class<? extends AuraInternal> findAura() {
 		String minecraftVersion = Bukkit.getServer().getMinecraftVersion();
 		return switch (minecraftVersion) {
-			case "1.21.10", "1.21.11" -> findAuraClass("v1_21_10");
+			case "1.20.5", "1.20.6" -> findAuraClass("v1_20_5");
+			case "1.21", "1.21.1", "1.21.3", "1.21.4","1.21.5", "1.21.6", "1.21.7", "1.21.8", "1.21.9", "1.21.10", "1.21.11" -> findAuraClass("v1_21");
+			case "1.21.2" -> throw new RuntimeException("1.21.2 minecraft version is not supported!");
 			default -> null;
 		};
 	}
 
-	private @NotNull Class<? extends Aura> findAuraClass(String version) {
+	public static @Nullable Class<? extends AuraNettyInjector> findInjector() {
+		String minecraftVersion = Bukkit.getServer().getMinecraftVersion();
+		return switch (minecraftVersion) {
+			case "1.20.5", "1.20.6" -> findNettyClass("v1_20_5");
+			case "1.21", "1.21.1", "1.21.3", "1.21.4","1.21.5", "1.21.6", "1.21.7", "1.21.8", "1.21.9", "1.21.10", "1.21.11" -> findNettyClass("v1_21");
+			case "1.21.2" -> throw new RuntimeException("1.21.2 minecraft version is not supported!");
+			default -> null;
+		};
+	}
+
+	private static @NotNull Class<? extends AuraInternal> findAuraClass(String version) {
 		try {
-			return (Class<? extends Aura>) Class.forName("bet.astral.aura.hooks." + version + ".Aura_" + version);
+			return (Class<? extends AuraInternal>) Class.forName("bet.astral.aura.hooks." + version + ".Aura_" + version);
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	@EventHandler(ignoreCancelled = true)
-	public void onPlayerJoin(@NotNull PlayerJoinEvent event) {
-		// Load user data
-		userProvider.loadUser(event.getPlayer());
-		AuraUser user = userProvider.getUser(event.getPlayer());
-
-		// Load glowing stuff
-		AuraInternal auraInternal = (AuraInternal) Aura.get();
-		auraInternal.join(event.getPlayer(), user);
-	}
-
-	@EventHandler(ignoreCancelled = true)
-	public void onPlayerQuit(@NotNull PlayerQuitEvent event) {
-		userProvider.unloadUser(userProvider.getUser(event.getPlayer()));
-	}
-
-	@EventHandler(ignoreCancelled = true)
-	public void onEntityAddToWorld(@NotNull PlayerChunkLoadEvent event) {
-		Player player = event.getPlayer();
-
-		Bukkit.getScheduler().runTaskLater(this, ()->{
-			Chunk chunk = event.getChunk();
-			for (Entity entity : chunk.getEntities()) {
-				fixEntity(player, entity);
-			}
-		}, 10);
-	}
-
-	@EventHandler(ignoreCancelled = true)
-	public void onEntityAddToWorld(@NotNull EntityAddToWorldEvent event) {
-		Bukkit.getScheduler().runTaskLater(this, ()->{
-			for (Player player : event.getEntity().getWorld().getPlayers()) {
-				fixEntity(player, event.getEntity());
-			}
-		}, 2);
-	}
-
-	public void fixEntity(Player player, Entity entity) {
-		AuraInternal internal =  (AuraInternal) Aura.get();
-		AuraUser user = userProvider.getUser(player);
-
-		GlowInfo glowInfo = user.getGlowInfo(entity);
-		if (glowInfo != null && glowInfo.isGlowing()) {
-			internal.setGlowPacket(player, entity);
-			if (glowInfo.getColor() != null) {
-				internal.setGlobalTeamPacket(player, entity, glowInfo.getColor());
-			}
-		} else {
-			AuraUser entityUser = userProvider.getUser(entity);
-			if (entityUser != null && entityUser.hasGlobalGlow()) {
-				internal.setGlowPacket(player, entity);
-				if (entityUser.getGlobalColor() != null) {
-					internal.setGlobalTeamPacket(player, entity, entityUser.getGlobalColor());
-				}
-			}
+	private static @NotNull Class<? extends AuraNettyInjector> findNettyClass(String version) {
+		try {
+			return (Class<? extends AuraNettyInjector>) Class.forName("bet.astral.aura.hooks." + version + ".NettyInjector_" + version);
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException(e);
 		}
 	}
+	public AuraUserProvider getUserProvider() {
+		return userProvider;
+	}
 
+	public Aura getAura() {
+		return aura;
+	}
+
+	public AuraInternal getInternal() {
+		return internal;
+	}
+
+	public AuraNettyInjector getInjector() {
+		return injector;
+	}
 }

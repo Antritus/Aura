@@ -1,12 +1,10 @@
-package bet.astral.aura.hooks.v1_21_10;
+package bet.astral.aura.hooks.v1_21;
 
-import bet.astral.aura.api.Aura;
 import bet.astral.aura.api.AuraInternal;
 import bet.astral.aura.api.color.GlowColor;
 import bet.astral.aura.api.color.VanillaGlowColor;
 import bet.astral.aura.api.user.AuraUser;
 import bet.astral.aura.api.user.AuraUserProvider;
-import bet.astral.aura.api.user.GlowInfo;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
@@ -24,15 +22,17 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class Aura_v1_21_10 extends Aura implements AuraInternal {
-	private static final Logger log = LoggerFactory.getLogger(Aura_v1_21_10.class);
+public class Aura_v1_21 implements AuraInternal {
+	private static final Logger log = LoggerFactory.getLogger(Aura_v1_21.class);
 	private AuraUserProvider users = null;
 	private final Map<GlowColor, PlayerTeam> globalTeams = new HashMap<>();
 
-	public Aura_v1_21_10() {
-		aura = this;
+	public Aura_v1_21() {
+		System.out.println("Using aura: " + getUsedInternalVersion());
 		for (VanillaGlowColor color : VanillaGlowColor.values()) {
 			Scoreboard scoreboard = new Scoreboard();
 			PlayerTeam team = new PlayerTeam(scoreboard, "g_" + color.getTeamName());
@@ -47,83 +47,7 @@ public class Aura_v1_21_10 extends Aura implements AuraInternal {
 
 	@Override
 	public String getUsedInternalVersion() {
-		return "1.21.8";
-	}
-
-	@Override
-	public void setGlowing(Player player, @NotNull Collection<? extends Entity> entities, GlowColor color, int ticks) {
-		for (Entity entity : entities) {
-			setGlowPacket(player, entity);
-			if (color != null) {
-				setTeamPacket(player, entity, color);
-			}
-			users.getUser(player).enableGlow(entity, color, ticks);
-		}
-	}
-
-	@Override
-	public void setGlowing(Player player, Entity target, GlowColor color, int ticks) {
-		setGlowing(player, List.of(target), color, ticks);
-	}
-
-	@Override
-	public void setGlowing(Player player, Collection<? extends Entity> entities, GlowColor color) {
-		setGlowing(player, entities, color, -1);
-	}
-
-	@Override
-	public void setGlowing(Player player, Entity target, GlowColor color) {
-		setGlowing(player, List.of(target), color);
-	}
-
-	@Override
-	public void unsetGlowing(Player player, Entity target) {
-		unsetGlowing(player, List.of(target));
-	}
-
-	@Override
-	public void unsetGlowing(Player player, @NotNull Collection<? extends Entity> entities) {
-		for (Entity entity : entities) {
-			unsetGlowPacket(player, entity);
-			users.getUser(player).disableGlow(entity);
-		}
-	}
-
-	@Override
-	public void setGlobalGlow(Entity entity, GlowColor color) {
-		users.getUser(entity).setGlobalColor(color);
-		users.getUser(entity).enableGlobalGlow();
-		entity.getWorld().getPlayers()
-			.forEach(ent -> {
-				setGlowPacket(ent, entity);
-				setGlobalTeamPacket(ent, entity, color);
-			});
-	}
-
-	@Override
-	public void unsetGlobalGlow(Entity entity) {
-		users.getUser(entity).disableGlobalGlow();
-		entity.getWorld().getPlayers()
-			.forEach(ent -> {
-				AuraUser user = users.getUser(ent);
-				GlowInfo info = user.getGlowInfo(entity);
-				if (info == null) {
-					unsetGlowPacket(ent, entity);
-				}
-			});
-	}
-
-	@Override
-	public GlowColor getGlobalGlow(Entity entity) {
-		return users.getUser(entity).getGlobalColor();
-	}
-
-	@Override
-	public boolean isPersistentGlobalGlow(Entity entity) {
-		if (!(entity instanceof Player)) {
-			return false;
-		}
-		return true;
+		return "1.21->1.21.4";
 	}
 
 	@Override
@@ -158,10 +82,10 @@ public class Aura_v1_21_10 extends Aura implements AuraInternal {
 		ClientboundSetPlayerTeamPacket addEntity =
 			ClientboundSetPlayerTeamPacket.createPlayerPacket(
 				team,
-				entity.getUniqueId().toString(),
+				entity instanceof Player ?
+					entity.getName() : entity.getUniqueId().toString(),
 				ClientboundSetPlayerTeamPacket.Action.ADD
 			);
-
 		sendPacket(player, addEntity);
 	}
 
@@ -202,10 +126,9 @@ public class Aura_v1_21_10 extends Aura implements AuraInternal {
 			new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
 
 		byte oldFlags = entityData.get(FLAGS);
-		byte newFlags = (byte) (oldFlags & 0x40);
+		byte newFlags = (byte) (oldFlags & ~0x40);
 
-		SynchedEntityData.DataValue<Byte> packed =
-			SynchedEntityData.DataValue.create(FLAGS, newFlags);
+		SynchedEntityData.DataValue<Byte> packed = SynchedEntityData.DataValue.create(FLAGS, newFlags);
 
 		ClientboundSetEntityDataPacket packet =
 			new ClientboundSetEntityDataPacket(

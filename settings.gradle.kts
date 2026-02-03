@@ -7,4 +7,5 @@ rootProject.name = "aura"
 include("api")
 include("paper_1_17_1")
 include("paper_1_19_4")
-include("paper_1_21_10")
+include("v1_20_5")
+include("v1_21")
