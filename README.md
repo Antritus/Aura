@@ -2,58 +2,34 @@
 Aura is a packet based player glow management plugin with functionality to make players and entities glow per player.
 
 ```java
-import bet.astral.guiman.api.sign.api.Sign;
-import bet.astral.guiman.api.sign.api.SignAction;
-import bet.astral.guiman.api.sign.api.material.SignMaterial;
-import bet.astral.guiman.api.sign.api.material.SmallSignMaterial;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
-import org.bukkit.DyeColor;
-import org.bukkit.entity.Player;
+package bet.astral.aura;
 
-import java.util.List;
+import bet.astral.aura.api.Aura;
+import bet.astral.aura.api.color.VanillaGlowColor;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Random;
 
 public class Test {
-	public void run(Player player) {
-		Sign sign = Sign.builder()
-			.setMaterial(SignMaterial.CHERRY)
-			.setColor(DyeColor.GREEN)
-			.setLines(
-				Component.text(""),
-				Component.text("^^^^^^^^^^^^^^^^"),
-				Component.text("Write something"),
-				Component.text("Hey I am red", NamedTextColor.RED)
-				)
-			.setHandler(() -> List.of(
-				SignAction.run((p, result) -> {
-					p.sendMessage("You wrote: " + result.getFirstPlain());
-				}),
-				SignAction.openSign(
-					Sign.builder()
-						.setMaterial(SmallSignMaterial.JUNGLE)
-						.setColor(DyeColor.WHITE)
-						.setLinePlain(1, "Beep Beep")
-						.setLinePlain(2, "Write Something")
-						.setLinePlain(3, "VVVVVVVVVVVVVVVV")
-						.setLinePlain(4, "")
-						.setOpenConsumer(p -> {
-							Bukkit.broadcast(p.name().color(NamedTextColor.GREEN)
-								.append(Component.text(" has opened the second sign!", NamedTextColor.YELLOW)));
-						})
-						.setHandler(() ->
-							List.of(
-								(p2, result2) -> {
-									p2.sendMessage("You wrote: " + result2.getFourthPlain());
-								}
-							)
-						).build())
-				)
-			).build();
-		
-		sign.open(player);
+	public void run(JavaPlugin plugin, @NotNull Player player){
+		Aura aura = Aura.get();
+		Random random = new Random();
+
+		player.getScheduler().runAtFixedRate(plugin,
+			task->{
+				player.getWorld().getNearbyEntities(player.getLocation(), 50, 50, 50)
+					.forEach(entity -> {
+						aura.setGlowing(player, entity, VanillaGlowColor.values()[random.nextInt(VanillaGlowColor.values().length)]);
+					});
+			},
+			null,
+			1,
+			25);
 	}
 }
+
 ```
 
 ## Gradle
