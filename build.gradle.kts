@@ -8,6 +8,7 @@ plugins {
 	id("xyz.jpenilla.run-paper") version "3.0.2" // Adds runServer task for testing
 	id("xyz.jpenilla.resource-factory-bukkit-convention") version "1.3.0" // Generates plugin.yml based on the Gradle config
 	id("com.gradleup.shadow") version "9.2.2"
+	id("maven-publish")
 }
 
 java.disableAutoTargetJvm() // Allow consuming JVM 21 projects (i.e. paper_1_21_8) even though our release is 17
@@ -19,10 +20,10 @@ repositories {
 dependencies {
 	compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
 
-	implementation("com.github.AstralLiteratureClub:MoreForJava:1.0.2")
-	implementation("com.github.AstralLiteratureClub:MessageManager:2.4.1")
-	implementation("com.github.AstralLiteratureClub:GUIMan:1.3.1-6")
-	implementation("com.github.AstralLiteratureClub:CloudPlusPlus:1.3.0")
+	compileOnly("com.github.AstralLiteratureClub:MoreForJava:1.0.2")
+	compileOnly("com.github.AstralLiteratureClub:MessageManager:2.4.1")
+	compileOnly("com.github.AstralLiteratureClub:GUIMan:1.3.1-6") // Currently developing newer version of this. It has recoded API and supports < 1.20.5 versions as it now supports 1.20.5+ only
+	compileOnly("com.github.AstralLiteratureClub:CloudPlusPlus:1.3.0")
 
 	implementation(project(":api"))
 
@@ -53,6 +54,17 @@ tasks.shadowJar {
 	// Needed for mergeServiceFiles to work properly in Shadow 9+
 	filesMatching("META-INF/services/**") {
 		duplicatesStrategy = DuplicatesStrategy.INCLUDE
+	}
+}
+
+publishing {
+	publications {
+		create<MavenPublication>("maven") {
+			groupId = project.group.toString();
+			artifactId = project.name
+			version = project.version.toString()
+			from(components["java"])
+		}
 	}
 }
 
