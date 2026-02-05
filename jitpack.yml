@@ -1,5 +1,7 @@
 jdk:
+    - openjdk17
     - openjdk21
+
 
 install:
     - ./gradlew clean publishToMavenLocal --refresh-dependencies
