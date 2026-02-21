@@ -28,15 +28,21 @@ dependencies {
 	implementation(project(":api"))
 
 	// Shade the reobf variant
-	runtimeOnly(project(":paper_1_17_1", configuration = "reobf"))
-	runtimeOnly(project(":paper_1_19_4", configuration = "reobf"))
+
+	runtimeOnly(project(":v1_18_R1", configuration = "reobf"))
+	runtimeOnly(project(":v1_18_R2", configuration = "reobf"))
+	runtimeOnly(project(":v1_19_R1", configuration = "reobf"))
+	runtimeOnly(project(":v1_19_R2", configuration = "reobf"))
+	runtimeOnly(project(":v1_19_R3", configuration = "reobf"))
+	runtimeOnly(project(":v1_20_R1", configuration = "reobf"))
+	runtimeOnly(project(":v1_20_R2", configuration = "reobf"))
+	runtimeOnly(project(":v1_20_R3", configuration = "reobf"))
 
 //	runtimeOnly(project(":v1_20", configuration = "reobf"))
 	// For Paper 1.20.5+, we don't need to use the reobf variant.
 	// If you still support spigot, you will need to use the reobf variant,
 	// and remove the Mojang-mapped metadata from the manifest below.
-	runtimeOnly(project(":v1_20_5"))
-	runtimeOnly(project(":v1_21"))
+	runtimeOnly(project(":v1_20_R4"))
 }
 
 tasks.assemble {

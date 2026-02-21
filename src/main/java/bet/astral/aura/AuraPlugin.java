@@ -37,7 +37,8 @@ public class AuraPlugin extends JavaPlugin implements Listener {
 			plugin.getLogger().severe("Aura does not support version: " + Bukkit.getMinecraftVersion());
 			plugin.getLogger().severe("Aura does not support version: " + Bukkit.getBukkitVersion());
 			plugin.getLogger().severe("");
-			plugin.setEnabled(false);
+			plugin.getServer().getPluginManager().disablePlugin(plugin);
+//			plugin.setEnabled(false); // Doesnt work in newer versions
 			return;
 		}
 
@@ -195,8 +196,8 @@ public class AuraPlugin extends JavaPlugin implements Listener {
 	public static @Nullable Class<? extends AuraInternal> findAura() {
 		String minecraftVersion = Bukkit.getServer().getMinecraftVersion();
 		return switch (minecraftVersion) {
-			case "1.20.5", "1.20.6" -> findAuraClass("v1_20_5");
-			case "1.21", "1.21.1", "1.21.3", "1.21.4","1.21.5", "1.21.6", "1.21.7", "1.21.8", "1.21.9", "1.21.10", "1.21.11" -> findAuraClass("v1_21");
+			case "1.20.3", "1.20.4" -> findAuraClass("v1_20_R3");
+			case "1.20.5", "1.20.6", "1.21", "1.21.1", "1.21.3", "1.21.4", "1.21.5", "1.21.6", "1.21.7", "1.21.8", "1.21.9", "1.21.10", "1.21.11" -> findAuraClass("v1_20_R4");
 			case "1.21.2" -> throw new RuntimeException("1.21.2 minecraft version is not supported!");
 			default -> null;
 		};
@@ -205,8 +206,8 @@ public class AuraPlugin extends JavaPlugin implements Listener {
 	public static @Nullable Class<? extends AuraNettyInjector> findInjector() {
 		String minecraftVersion = Bukkit.getServer().getMinecraftVersion();
 		return switch (minecraftVersion) {
-			case "1.20.5", "1.20.6" -> findNettyClass("v1_20_5");
-			case "1.21", "1.21.1", "1.21.3", "1.21.4","1.21.5", "1.21.6", "1.21.7", "1.21.8", "1.21.9", "1.21.10", "1.21.11" -> findNettyClass("v1_21");
+			case "1.20.3", "1.20.4" -> findNettyClass("v1_20_R3");
+			case "1.20.5", "1.20.6", "1.21", "1.21.1", "1.21.3", "1.21.4", "1.21.5", "1.21.6", "1.21.7", "1.21.8", "1.21.9", "1.21.10", "1.21.11" -> findNettyClass("v1_20_R4");
 			case "1.21.2" -> throw new RuntimeException("1.21.2 minecraft version is not supported!");
 			default -> null;
 		};

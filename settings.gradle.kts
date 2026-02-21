@@ -5,7 +5,25 @@ plugins {
 rootProject.name = "aura"
 
 include("api")
-include("paper_1_17_1")
-include("paper_1_19_4")
-include("v1_20_5")
-include("v1_21")
+// 1.16
+include("v1_16_R1")
+
+// 1.18
+include("v1_18_R1")
+// 1.18.2
+include("v1_18_R2")
+// 1.19
+include("v1_19_R1")
+// 1.19.3
+include("v1_19_R2")
+// 1.19.4
+include("v1_19_R3")
+// 1.20.1
+include("v1_20_R1")
+// 1.20.2
+include("v1_20_R2")
+// 1.20.3
+include("v1_20_R3")
+// 1.20.5 -> 1.21.*
+include("v1_20_R4")
+
