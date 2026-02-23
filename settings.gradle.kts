@@ -5,9 +5,9 @@ plugins {
 rootProject.name = "aura"
 
 include("api")
-// 1.16
-include("v1_16_R1")
 
+// 1.17
+include("v1_17_R1")
 // 1.18
 include("v1_18_R1")
 // 1.18.2

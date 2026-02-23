@@ -1,4 +1,4 @@
-package bet.astral.aura.hooks.v1_18_R1;
+package bet.astral.aura.hooks.v1_17_R1;
 
 import bet.astral.aura.api.internal.AuraNettyHandler;
 import bet.astral.aura.api.user.AuraUserProvider;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public final class NettyHandler_v1_18_R1 extends ChannelDuplexHandler implements AuraNettyHandler {
+public final class NettyHandler_v1_17_R1 extends ChannelDuplexHandler implements AuraNettyHandler {
 	public static final EntityDataAccessor<Byte> FLAGS =
 		new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
 	private final Player viewer;
@@ -24,7 +24,7 @@ public final class NettyHandler_v1_18_R1 extends ChannelDuplexHandler implements
 
 	private static final byte FLAG_GLOWING = 0x40;
 
-	public NettyHandler_v1_18_R1(Player viewer, AuraUserProvider users) {
+	public NettyHandler_v1_17_R1(Player viewer, AuraUserProvider users) {
 		this.viewer = viewer;
 		this.users = users;
 	}
@@ -86,7 +86,7 @@ public final class NettyHandler_v1_18_R1 extends ChannelDuplexHandler implements
 			}
 		}
 
-		SynchedEntityData data = Aura_v1_18_R1.createSyncedData(packet);
+		SynchedEntityData data = Aura_v1_17_R1.createSyncedData(packet);
 
 		if (!found) {
 			data.define(FLAGS, FLAG_GLOWING);

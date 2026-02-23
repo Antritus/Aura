@@ -1,4 +1,4 @@
-package bet.astral.aura.hooks.v1_18_R1;
+package bet.astral.aura.hooks.v1_17_R1;
 
 import bet.astral.aura.api.AuraInternal;
 import bet.astral.aura.api.color.GlowColor;
@@ -14,8 +14,8 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
-import org.bukkit.craftbukkit.v1_18_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -25,12 +25,12 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Aura_v1_18_R1 implements AuraInternal {
-	private static final Logger log = LoggerFactory.getLogger(Aura_v1_18_R1.class);
+public class Aura_v1_17_R1 implements AuraInternal {
+	private static final Logger log = LoggerFactory.getLogger(Aura_v1_17_R1.class);
 	private AuraUserProvider users = null;
 	private final Map<GlowColor, PlayerTeam> globalTeams = new HashMap<>();
 
-	public Aura_v1_18_R1() {
+	public Aura_v1_17_R1() {
 		for (VanillaGlowColor color : VanillaGlowColor.values()) {
 			Scoreboard scoreboard = new Scoreboard();
 			PlayerTeam team = new PlayerTeam(scoreboard, "g_" + color.getTeamName());
@@ -97,11 +97,11 @@ public class Aura_v1_18_R1 implements AuraInternal {
 		var nmsEntity = ((CraftEntity) entity).getHandle();
 		SynchedEntityData entityData = nmsEntity.getEntityData();
 
-		byte oldFlags = entityData.get(NettyHandler_v1_18_R1.FLAGS);
+		byte oldFlags = entityData.get(NettyHandler_v1_17_R1.FLAGS);
 		byte newFlags = (byte) (oldFlags | 0x40);
 
 		SynchedEntityData data = createSyncedData(nmsEntity.getEntityData());
-		data.define(NettyHandler_v1_18_R1.FLAGS, newFlags);
+		data.define(NettyHandler_v1_17_R1.FLAGS, newFlags);
 
 		ClientboundSetEntityDataPacket packet =
 			new ClientboundSetEntityDataPacket(
@@ -125,7 +125,7 @@ public class Aura_v1_18_R1 implements AuraInternal {
 		byte newFlags = (byte) (oldFlags & ~0x40);
 
 		SynchedEntityData data = createSyncedData(nmsEntity.getEntityData());
-		data.define(NettyHandler_v1_18_R1.FLAGS, newFlags);
+		data.define(NettyHandler_v1_17_R1.FLAGS, newFlags);
 
 		ClientboundSetEntityDataPacket packet = new ClientboundSetEntityDataPacket(
 			nmsEntity.getId(),

@@ -1,12 +1,12 @@
-package bet.astral.aura.hooks.v1_18_R1;
+package bet.astral.aura.hooks.v1_17_R1;
 
 import bet.astral.aura.api.internal.AuraNettyInjector;
 import bet.astral.aura.api.user.AuraUserProvider;
 import io.netty.channel.Channel;
-import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
-public class NettyInjector_v1_18_R1 implements AuraNettyInjector {
+public class NettyInjector_v1_17_R1 implements AuraNettyInjector {
 	@Override
 	public void inject(Player player, AuraUserProvider provider) {
 		CraftPlayer craft = (CraftPlayer) player;
@@ -34,7 +34,7 @@ public class NettyInjector_v1_18_R1 implements AuraNettyInjector {
 		}
 	}
 	@Override
-	public NettyHandler_v1_18_R1 createInjector(Player player, AuraUserProvider provider) {
-		return new NettyHandler_v1_18_R1(player, provider);
+	public NettyHandler_v1_17_R1 createInjector(Player player, AuraUserProvider provider) {
+		return new NettyHandler_v1_17_R1(player, provider);
 	}
 }
