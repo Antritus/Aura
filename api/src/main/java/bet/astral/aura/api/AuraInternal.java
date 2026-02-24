@@ -8,8 +8,6 @@ import org.bukkit.entity.Player;
 
 public interface AuraInternal {
 
-	String getUsedInternalVersion();
-
 	void createTeamGlobalPacket(Player player, GlowColor color);
 	void createTeamPacket(Player player, Entity entity, GlowColor color);
 	void setGlobalTeamPacket(Player player, Entity entity, GlowColor color);

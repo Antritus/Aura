@@ -4,12 +4,15 @@ import bet.astral.aura.api.Aura;
 import bet.astral.aura.api.AuraInternal;
 import bet.astral.aura.api.color.VanillaGlowColor;
 import bet.astral.aura.api.internal.AuraNettyInjector;
+import bet.astral.aura.api.multiversion.VersionHandler;
 import bet.astral.aura.api.user.AuraUser;
 import bet.astral.aura.api.user.AuraUserProvider;
 import bet.astral.aura.gui.GlowGUI;
 import bet.astral.aura.user.UserProvider;
 import bet.astral.guiman.GUIMan;
 import bet.astral.guiman.gui.builders.InventoryGUIBuilder;
+import bet.astral.multiversion.ClassFetcher;
+import bet.astral.multiversion.Version;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
@@ -18,42 +21,31 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Random;
 
 public class AuraPlugin extends JavaPlugin implements Listener {
+	private static final org.slf4j.Logger log = LoggerFactory.getLogger(AuraPlugin.class);
+
 	public static void init(JavaPlugin plugin) {
 		aura = new CoreAura();
 		internal = null;
 		injector = null;
 
-		Class<? extends AuraInternal> auraClass = findAura();
-		Class<? extends AuraNettyInjector> nettyClass = findInjector();
-		if (auraClass == null) {
+		VersionHandler versionHandler = (VersionHandler) ClassFetcher.fetch("bet.astral.aura.hooks");
+		if (versionHandler == null) {
 			plugin.getLogger().severe("");
-			plugin.getLogger().severe("Aura does not support version: " + Bukkit.getMinecraftVersion());
-			plugin.getLogger().severe("Aura does not support version: " + Bukkit.getBukkitVersion());
+			plugin.getLogger().severe("Aura does not support the server version! (" + Bukkit.getMinecraftVersion()+")");
 			plugin.getLogger().severe("");
 			plugin.getServer().getPluginManager().disablePlugin(plugin);
-//			plugin.setEnabled(false); // Doesnt work in newer versions
 			return;
 		}
 
-		try {
-			internal = auraClass.getConstructor().newInstance();
-			internal.registerUserProvider(userProvider);
-		} catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
-
-		try {
-			injector = nettyClass.getConstructor().newInstance();
-		} catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
+		internal = versionHandler.getInternalAura();
+		injector = versionHandler.getNettyInjector();
+		version = versionHandler.getClass().getAnnotation(Version.class);
 
 		aura.registerAuraInternal(internal);
 		aura.registerUserProvider(userProvider);
@@ -61,7 +53,7 @@ public class AuraPlugin extends JavaPlugin implements Listener {
 		plugin.getServer().getPluginManager().registerEvents(new NettyManager(plugin, userProvider, injector), plugin);
 		plugin.getServer().getPluginManager().registerEvents(new EntityManager(plugin, internal, aura, userProvider), plugin);
 	}
-	public static void initGlowPlugin(JavaPlugin plugin) {
+	private static void initGlowPlugin(@NotNull JavaPlugin plugin) {
 		if (!plugin.isEnabled()){
 			return;
 		}
@@ -107,16 +99,7 @@ public class AuraPlugin extends JavaPlugin implements Listener {
 				public boolean execute(CommandSender sender,
 									   String label,
 									   String[] args) {
-					sender.sendMessage("");
-					sender.sendMessage("Bukkit Version: " + Bukkit.getBukkitVersion());
-					sender.sendMessage("Minecraft Version: " + Bukkit.getMinecraftVersion());
-					sender.sendMessage("Aura Internal Version: " + internal.getUsedInternalVersion());
-					sender.sendMessage("Aura Provider: " + internal.getClass().getName());
-					sender.sendMessage("Aura Version: " + Bukkit.getBukkitVersion());
-					sender.sendMessage("Author(s): ");
-					sender.sendMessage(" - Laakkonen A.");
-					sender.sendMessage("");
-
+					sendVersion(plugin, sender);
 					return true;
 				}
 			}
@@ -173,9 +156,32 @@ public class AuraPlugin extends JavaPlugin implements Listener {
 				}
 			}
 		);
+
+		sendVersion(plugin, plugin.getServer().getConsoleSender());
+	}
+
+	public static void sendVersion(@NotNull JavaPlugin plugin, @NotNull CommandSender sender) {
+		sender.sendMessage("---- Server ----");
+		sendInfo(sender, "Minecraft Version", Bukkit.getMinecraftVersion());
+		sendInfo(sender, "Bukkit Version", Bukkit.getBukkitVersion());
+		sender.sendMessage("---- Aura Provider ----");
+		sendInfo(sender, "Minium Version", version.miniumVersion());
+		sendInfo(sender, "Maximum Version", version.maximumVersion());
+		sendInfo(sender, "Internal Version", version.internalVersion());
+		sendInfo(sender, "Legacy", String.valueOf(version.legacy()));
+		sendInfo(sender, "Legacy Version", version.legacyVersion());
+
+		sender.sendMessage("---- Author(s) ----");
+		plugin.getPluginMeta().getAuthors().forEach(author->{
+			sender.sendMessage(" - " + author);
+		});
+	}
+	public static void sendInfo(@NotNull CommandSender sender, String name, String value){
+		sender.sendMessage(name+": " + value);
 	}
 	static Aura aura;
 	static AuraInternal internal;
+	static Version version;
 	static AuraNettyInjector injector;
 	static GlowGUI glowGUI;
 	static final UserProvider userProvider = new UserProvider();
@@ -191,42 +197,6 @@ public class AuraPlugin extends JavaPlugin implements Listener {
 		initGlowPlugin(this);
 
 		getLogger().info("Aura has enabled!");
-	}
-
-	public static @Nullable Class<? extends AuraInternal> findAura() {
-		String minecraftVersion = Bukkit.getServer().getMinecraftVersion();
-		return switch (minecraftVersion) {
-			case "1.20.3", "1.20.4" -> findAuraClass("v1_20_R3");
-			case "1.20.5", "1.20.6", "1.21", "1.21.1", "1.21.3", "1.21.4", "1.21.5", "1.21.6", "1.21.7", "1.21.8", "1.21.9", "1.21.10", "1.21.11" -> findAuraClass("v1_20_R4");
-			case "1.21.2" -> throw new RuntimeException("1.21.2 minecraft version is not supported!");
-			default -> null;
-		};
-	}
-
-	public static @Nullable Class<? extends AuraNettyInjector> findInjector() {
-		String minecraftVersion = Bukkit.getServer().getMinecraftVersion();
-		return switch (minecraftVersion) {
-			case "1.20.3", "1.20.4" -> findNettyClass("v1_20_R3");
-			case "1.20.5", "1.20.6", "1.21", "1.21.1", "1.21.3", "1.21.4", "1.21.5", "1.21.6", "1.21.7", "1.21.8", "1.21.9", "1.21.10", "1.21.11" -> findNettyClass("v1_20_R4");
-			case "1.21.2" -> throw new RuntimeException("1.21.2 minecraft version is not supported!");
-			default -> null;
-		};
-	}
-
-	private static @NotNull Class<? extends AuraInternal> findAuraClass(String version) {
-		try {
-			return (Class<? extends AuraInternal>) Class.forName("bet.astral.aura.hooks." + version + ".Aura_" + version);
-		} catch (ClassNotFoundException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	private static @NotNull Class<? extends AuraNettyInjector> findNettyClass(String version) {
-		try {
-			return (Class<? extends AuraNettyInjector>) Class.forName("bet.astral.aura.hooks." + version + ".NettyInjector_" + version);
-		} catch (ClassNotFoundException e) {
-			throw new RuntimeException(e);
-		}
 	}
 	public AuraUserProvider getUserProvider() {
 		return userProvider;

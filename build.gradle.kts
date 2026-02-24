@@ -29,6 +29,19 @@ dependencies {
 
 	// Shade the reobf variant
 
+	runtimeOnly(project(":v1_9_R1"))
+	runtimeOnly(project(":v1_9_R2"))
+	runtimeOnly(project(":v1_10_R1"))
+	runtimeOnly(project(":v1_11_R1"))
+	runtimeOnly(project(":v1_12_R1"))
+	runtimeOnly(project(":v1_13_R1"))
+	runtimeOnly(project(":v1_13_R2"))
+	runtimeOnly(project(":v1_14_R1"))
+	runtimeOnly(project(":v1_15_R1"))
+	runtimeOnly(project(":v1_16_R1"))
+	runtimeOnly(project(":v1_16_R2"))
+	runtimeOnly(project(":v1_16_R3"))
+	runtimeOnly(project(":v1_17_R1", configuration = "reobf"))
 	runtimeOnly(project(":v1_18_R1", configuration = "reobf"))
 	runtimeOnly(project(":v1_18_R2", configuration = "reobf"))
 	runtimeOnly(project(":v1_19_R1", configuration = "reobf"))
