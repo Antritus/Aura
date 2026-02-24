@@ -44,11 +44,6 @@ public class Aura_v1_18_R2 implements AuraInternal {
 	}
 
 	@Override
-	public String getUsedInternalVersion() {
-		return "1.18.2";
-	}
-
-	@Override
 	public void createTeamGlobalPacket(Player player, GlowColor color) {
 
 		PlayerTeam team = globalTeams.get(color);
