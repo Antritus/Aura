@@ -4,7 +4,7 @@ import xyz.jpenilla.runpaper.task.RunServer
 
 plugins {
 	`my-conventions`
-	id("io.papermc.paperweight.userdev") version "2.0.0-beta.19" apply false
+	id("io.papermc.paperweight.userdev") version "2.0.0-beta.21" apply false
 	id("xyz.jpenilla.run-paper") version "3.0.2" // Adds runServer task for testing
 	id("xyz.jpenilla.resource-factory-bukkit-convention") version "1.3.0" // Generates plugin.yml based on the Gradle config
 	id("com.gradleup.shadow") version "9.2.2"
