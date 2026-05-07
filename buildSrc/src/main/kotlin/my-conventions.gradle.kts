@@ -9,11 +9,12 @@ plugins {
 java {
   // Configure the java toolchain. This allows gradle to auto-provision JDK 21 on systems that only have JDK 17 installed for example.
   // If you need to compile to for example JVM 8 or 17 bytecode, adjust the 'release' option below and keep the toolchain at 21.
-  toolchain.languageVersion = JavaLanguageVersion.of(21)
+  toolchain.languageVersion = JavaLanguageVersion.of(25)
 }
 
 repositories {
-  maven("https://repo.papermc.io/repository/maven-public/")
+	mavenCentral()
+	maven("https://repo.papermc.io/repository/maven-public/")
 }
 
 tasks {

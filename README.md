@@ -37,6 +37,7 @@ public class Test {
 ```groovy
 repositories {
 	maven("https://jitpack.io")
+	maven("https://repo.codemc.io/repository/nms/") // Contains the NMS requirements, also possible to use own buildtools from spigot for this.
 }
 
 dependencies {
@@ -50,10 +51,11 @@ dependencies {
 
 
 | Version       | Entity Glow | Untested? | In Development? |
-|---------------|-----------|--------|-------------|
-| 1.21–1.21.11  | ✅         | ❌       | ✅           |
-| 1.20.5–1.20.6 | ✅         | ❌       | ✅           |
-| 1.20–1.20.4   | ✅          | ✅      | ✅           |
-| 1.19–1.19.4   | ✅          | ✅      | ✅           |
-| 1.18–1.18.2   | ❌         | ✅      | ✅           |
-| 1.17–1.17.1   | ❌         | ❌       | ❌            |
+|---------------|---------|--------|-------------|
+| 26.1          | ❌       | ❌      | ✅           |
+| 1.21–1.21.11  | ✅       | ❌      | ✅           |
+| 1.20.5–1.20.6 | ✅       | ❌      | ✅           |
+| 1.20–1.20.4   | ✅        | ✅      | ✅           |
+| 1.19–1.19.4   | ✅        | ✅      | ✅           |
+| 1.18–1.18.2   | ✅        | ✅      | ✅           |
+| 1.9–1.17.1    | ✅        | ✅       | ✅            |
