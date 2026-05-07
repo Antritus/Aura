@@ -8,11 +8,14 @@ import bet.astral.aura.api.multiversion.VersionHandler;
 import bet.astral.aura.api.user.AuraUser;
 import bet.astral.aura.api.user.AuraUserProvider;
 import bet.astral.aura.gui.GlowGUI;
+import bet.astral.aura.testing.TestWorld;
 import bet.astral.aura.user.UserProvider;
 import bet.astral.guiman.GUIMan;
 import bet.astral.guiman.gui.builders.InventoryGUIBuilder;
 import bet.astral.multiversion.ClassFetcher;
 import bet.astral.multiversion.Version;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
@@ -42,6 +45,7 @@ public class AuraPlugin extends JavaPlugin implements Listener {
 			plugin.getServer().getPluginManager().disablePlugin(plugin);
 			return;
 		}
+		versionHandler.initialize();
 
 		internal = versionHandler.getInternalAura();
 		injector = versionHandler.getNettyInjector();
@@ -146,7 +150,21 @@ public class AuraPlugin extends JavaPlugin implements Listener {
 		);
 		plugin.getServer().getCommandMap().register(
 			"aura",
-			new BukkitCommand("test") {
+			new BukkitCommand("testgenerate") {
+				@Override
+				public boolean execute(CommandSender sender,
+									   String label,
+									   String[] args) {
+					sender.sendMessage(Component.text("Starting world generation...", NamedTextColor.YELLOW));
+					TestWorld.generate();
+					sender.sendMessage(Component.text("World has generated!", NamedTextColor.GREEN));
+					return true;
+				}
+			}
+		);
+		plugin.getServer().getCommandMap().register(
+			"aura",
+			new BukkitCommand("testteleport") {
 				@Override
 				public boolean execute(CommandSender sender,
 									   String label,
@@ -156,7 +174,6 @@ public class AuraPlugin extends JavaPlugin implements Listener {
 				}
 			}
 		);
-
 		sendVersion(plugin, plugin.getServer().getConsoleSender());
 	}
 
