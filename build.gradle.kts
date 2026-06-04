@@ -11,9 +11,26 @@ plugins {
 	id("maven-publish")
 }
 
-// Ensure every single subproject is forced into the correct JitPack repository layout format
+// Force all child modules to publish under the main project's repository group identifier
 subprojects {
 	group = "com.github.Antritus.Aura"
+
+	// Apply publishing capability directly to the subprojects
+	plugins.apply("maven-publish")
+	plugins.apply("java") // Ensures the 'java' component is available
+
+	publishing {
+		publications {
+			create<MavenPublication>("maven") {
+				groupId = project.group.toString()
+				artifactId = project.name
+				version = project.version.toString()
+
+				// Expose the compiled JAR of the submodule
+				from(components["java"])
+			}
+		}
+	}
 }
 
 java.disableAutoTargetJvm() // Allow consuming JVM 21 projects (i.e. paper_1_21_8) even though our release is 17
