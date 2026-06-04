@@ -5,10 +5,15 @@ import xyz.jpenilla.runpaper.task.RunServer
 plugins {
 	`my-conventions`
 	id("io.papermc.paperweight.userdev") version "2.0.0-beta.21" apply false
-	id("xyz.jpenilla.run-paper") version "3.0.2" // Adds runServer task for testing
-	id("xyz.jpenilla.resource-factory-bukkit-convention") version "1.3.0" // Generates plugin.yml based on the Gradle config
+	id("xyz.jpenilla.run-paper") version "3.0.2"
+	id("xyz.jpenilla.resource-factory-bukkit-convention") version "1.3.0"
 	id("com.gradleup.shadow") version "9.2.2"
 	id("maven-publish")
+}
+
+// Ensure every single subproject is forced into the correct JitPack repository layout format
+subprojects {
+	group = "com.github.Antritus.Aura"
 }
 
 java.disableAutoTargetJvm() // Allow consuming JVM 21 projects (i.e. paper_1_21_8) even though our release is 17
@@ -82,14 +87,13 @@ tasks.shadowJar {
 publishing {
 	publications {
 		create<MavenPublication>("maven") {
-			groupId = project.group.toString();
+			groupId = project.group.toString()
 			artifactId = project.name
 			version = project.version.toString()
 			from(components["java"])
 		}
 	}
 }
-
 java {
 	toolchain {
 		languageVersion.set(JavaLanguageVersion.of(21))
