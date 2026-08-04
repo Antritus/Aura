@@ -1,71 +1,74 @@
 package bet.astral.aura.api.color;
 
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+
 public enum VanillaGlowColor implements GlowColor {
-  /**
-   * Represents black
-   */
-  BLACK("black", 0, 0, 0),
-  /**
-   * Represents dark blue
-   */
-  DARK_BLUE("dark_blue", 255, 255, 255),
-  /**
-   * Represents dark green
-   */
-  DARK_GREEN("dark_green", 255, 255, 255),
-  /**
-   * Represents dark blue (aqua)
-   */
-  DARK_AQUA("dark_aqua", 255, 255, 255),
-  /**
-   * Represents dark red
-   */
-  DARK_RED("dark_red", 255, 255, 255),
-  /**
-   * Represents dark purple
-   */
-  DARK_PURPLE("dark_purple", 255, 255, 255),
-  /**
-   * Represents gold
-   */
-  GOLD("gold", 255, 255, 255),
-  /**
-   * Represents gray
-   */
-  GRAY("gray", 255, 255, 255),
-  /**
-   * Represents dark gray
-   */
-  DARK_GRAY("dark_gray", 255, 255, 255),
-  /**
-   * Represents blue
-   */
-  BLUE("blue", 255, 255, 255),
-  /**
-   * Represents green
-   */
-  GREEN("green", 255, 255, 255),
-  /**
-   * Represents aqua
-   */
-  AQUA("aqua", 255, 255, 255),
-  /**
-   * Represents red
-   */
-  RED("red", 255, 255, 255),
-  /**
-   * Represents light purple
-   */
-  LIGHT_PURPLE("light_purple", 255, 255, 255),
-  /**
-   * Represents yellow
-   */
-  YELLOW("yellow", 255, 255, 255),
-  /**
-   * Represents white
-   */
-  WHITE("white", 255, 255, 255)
-  ;
+	/**
+	 * Represents black
+	 */
+	BLACK("black", 0, 0, 0),
+	/**
+	 * Represents dark blue
+	 */
+	DARK_BLUE("dark_blue", 0, 0, 170),
+	/**
+	 * Represents dark green
+	 */
+	DARK_GREEN("dark_green", 0, 170, 0),
+	/**
+	 * Represents dark blue (aqua)
+	 */
+	DARK_AQUA("dark_aqua", 0, 170, 170),
+	/**
+	 * Represents dark red
+	 */
+	DARK_RED("dark_red", 170, 0, 0),
+	/**
+	 * Represents dark purple
+	 */
+	DARK_PURPLE("dark_purple", 170, 0, 170),
+	/**
+	 * Represents gold
+	 */
+	GOLD("gold", 255, 170, 0),
+	/**
+	 * Represents gray
+	 */
+	GRAY("gray", 170, 170, 170),
+	/**
+	 * Represents dark gray
+	 */
+	DARK_GRAY("dark_gray", 85, 85, 85),
+	/**
+	 * Represents blue
+	 */
+	BLUE("blue", 85, 85, 255),
+	/**
+	 * Represents green
+	 */
+	GREEN("green", 85, 255, 85),
+	/**
+	 * Represents aqua
+	 */
+	AQUA("aqua", 85, 255, 255),
+	/**
+	 * Represents red
+	 */
+	RED("red", 255, 85, 85),
+	/**
+	 * Represents light purple
+	 */
+	LIGHT_PURPLE("light_purple", 255, 85, 255),
+	/**
+	 * Represents yellow
+	 */
+	YELLOW("yellow", 255, 255, 85),
+	/**
+	 * Represents white
+	 */
+	WHITE("white", 255, 255, 255)
+	;
 
   ;
 
@@ -99,6 +102,10 @@ public enum VanillaGlowColor implements GlowColor {
   @Override
   public int getBlue() {
     return blue;
+  }
+
+  public NamedTextColor asNamedTextColor() {
+	  return NamedTextColor.nearestTo(TextColor.color(red, green, blue));
   }
 
 	@Override

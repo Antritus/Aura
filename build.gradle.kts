@@ -136,7 +136,7 @@ paperPluginYaml {
 }
 
 tasks.runServer {
-	minecraftVersion("1.21")
+	minecraftVersion("1.21.10")
 	jvmArgs("-Xms4G", "-Xmx4G")
 }
 
