@@ -1,4 +1,4 @@
-package bet.astral.aura.hooks.v26_1_R1;
+package bet.astral.aura.hooks.v26;
 
 import bet.astral.aura.api.AuraInternal;
 import bet.astral.aura.api.color.GlowColor;
@@ -26,16 +26,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Aura_v26_1_R1 implements AuraInternal {
-	private static final Logger log = LoggerFactory.getLogger(Aura_v26_1_R1.class);
+public class Aura_v26 implements AuraInternal {
+	private static final Logger log = LoggerFactory.getLogger(Aura_v26.class);
 	private AuraUserProvider users = null;
 	private final Map<GlowColor, PlayerTeam> globalTeams = new HashMap<>();
 
-	public Aura_v26_1_R1() {
+	public Aura_v26() {
 		for (VanillaGlowColor color : VanillaGlowColor.values()) {
 			Scoreboard scoreboard = new Scoreboard();
 			PlayerTeam team = new PlayerTeam(scoreboard, "g_" + color.getTeamName());
-			team.setColor(ChatFormatting.getById(color.asVanillaColor().ordinal()));
+			team.setColor(ChatFormatting.getByCode(color.asVanillaColor().getCode()));
 			globalTeams.put(color, team);
 		}
 	}

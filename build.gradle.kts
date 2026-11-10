@@ -81,6 +81,13 @@ dependencies {
 	// If you still support spigot, you will need to use the reobf variant,
 	// and remove the Mojang-mapped metadata from the manifest below.
 	runtimeOnly(project(":v1_20_R4"))
+	runtimeOnly(project(":v26"))
+
+	/*
+	runtimeOnly(project(":v26_2"))
+	runtimeOnly(project(":v26_3"))
+
+	 */
 }
 
 tasks.assemble {

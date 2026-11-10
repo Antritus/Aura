@@ -53,5 +53,7 @@ include("v1_20_R2")
 include("v1_20_R3")
 // 1.20.5 -> 1.21.*
 include("v1_20_R4")
-// 26.1
-include("v26_1_R1")
+
+// 26.1 -> 26.4
+include("v26")
+
