@@ -34,7 +34,7 @@ public class Aura_v1_19_R1 implements AuraInternal {
 		for (VanillaGlowColor color : VanillaGlowColor.values()) {
 			Scoreboard scoreboard = new Scoreboard();
 			PlayerTeam team = new PlayerTeam(scoreboard, "g_" + color.getTeamName());
-			team.setColor(ChatFormatting.getById(color.asVanillaColor().ordinal()));
+			team.setColor(ChatFormatting.getByCode(color.asVanillaColor().getCode()));
 			globalTeams.put(color, team);
 		}
 	}
