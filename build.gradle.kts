@@ -81,7 +81,10 @@ dependencies {
 	// If you still support spigot, you will need to use the reobf variant,
 	// and remove the Mojang-mapped metadata from the manifest below.
 	runtimeOnly(project(":v1_20_R4"))
-	runtimeOnly(project(":v26"))
+
+	// 2026
+	runtimeOnly(project(":v26_R1"))
+	runtimeOnly(project(":v26_R2"))
 
 	/*
 	runtimeOnly(project(":v26_2"))
@@ -145,78 +148,4 @@ paperPluginYaml {
 tasks.runServer {
 	minecraftVersion("1.21.10")
 	jvmArgs("-Xms4G", "-Xmx4G")
-}
-
-tasks.register("run1_21_11", RunServer::class) {
-	minecraftVersion("1.21.11")
-	pluginJars.from(tasks.shadowJar.flatMap { it.archiveFile })
-	runDirectory = layout.projectDirectory.dir("run1_21_11")
-	systemProperties["Paper.IgnoreJavaVersion"] = true
-}
-tasks.register("run1_21_10", RunServer::class) {
-	minecraftVersion("1.21.10")
-	pluginJars.from(tasks.shadowJar.flatMap { it.archiveFile })
-	runDirectory = layout.projectDirectory.dir("run1_21_10")
-	systemProperties["Paper.IgnoreJavaVersion"] = true
-}
-tasks.register("run1_21_9", RunServer::class) {
-	minecraftVersion("1.21.9")
-	pluginJars.from(tasks.shadowJar.flatMap { it.archiveFile })
-	runDirectory = layout.projectDirectory.dir("run1_21_9")
-	systemProperties["Paper.IgnoreJavaVersion"] = true
-}
-tasks.register("run1_21_8", RunServer::class) {
-	minecraftVersion("1.21.8")
-	pluginJars.from(tasks.shadowJar.flatMap { it.archiveFile })
-	runDirectory = layout.projectDirectory.dir("run1_21_8")
-	systemProperties["Paper.IgnoreJavaVersion"] = true
-}
-tasks.register("run1_21_7", RunServer::class) {
-	minecraftVersion("1.21.7")
-	pluginJars.from(tasks.shadowJar.flatMap { it.archiveFile })
-	runDirectory = layout.projectDirectory.dir("run1_21_7")
-	systemProperties["Paper.IgnoreJavaVersion"] = true
-}
-tasks.register("run1_21_6", RunServer::class) {
-	minecraftVersion("1.21.6")
-	pluginJars.from(tasks.shadowJar.flatMap { it.archiveFile })
-	runDirectory = layout.projectDirectory.dir("run1_21_6")
-	systemProperties["Paper.IgnoreJavaVersion"] = true
-}
-tasks.register("run1_21_5", RunServer::class) {
-	minecraftVersion("1.21.5")
-	pluginJars.from(tasks.shadowJar.flatMap { it.archiveFile })
-	runDirectory = layout.projectDirectory.dir("run1_21_5")
-	systemProperties["Paper.IgnoreJavaVersion"] = true
-}
-tasks.register("run1_21_4", RunServer::class) {
-	minecraftVersion("1.21.4")
-	pluginJars.from(tasks.shadowJar.flatMap { it.archiveFile })
-	runDirectory = layout.projectDirectory.dir("run1_21_4")
-	systemProperties["Paper.IgnoreJavaVersion"] = true
-}
-tasks.register("run1_21_3", RunServer::class) {
-	minecraftVersion("1.21.3")
-	pluginJars.from(tasks.shadowJar.flatMap { it.archiveFile })
-	runDirectory = layout.projectDirectory.dir("run1_21_3")
-	systemProperties["Paper.IgnoreJavaVersion"] = true
-}
-tasks.register("run1_21_1", RunServer::class) {
-	minecraftVersion("1.21.1")
-	pluginJars.from(tasks.shadowJar.flatMap { it.archiveFile })
-	runDirectory = layout.projectDirectory.dir("run1_21_1")
-	systemProperties["Paper.IgnoreJavaVersion"] = true
-}
-tasks.register("run1_21", RunServer::class) {
-	minecraftVersion("1.21")
-	pluginJars.from(tasks.shadowJar.flatMap { it.archiveFile })
-	runDirectory = layout.projectDirectory.dir("run1_21")
-	systemProperties["Paper.IgnoreJavaVersion"] = true
-}
-
-tasks.register("run1_20_6", RunServer::class) {
-	minecraftVersion("1.20.6")
-	pluginJars.from(tasks.shadowJar.flatMap { it.archiveFile })
-	runDirectory = layout.projectDirectory.dir("run1_20_6")
-	systemProperties["Paper.IgnoreJavaVersion"] = true
 }

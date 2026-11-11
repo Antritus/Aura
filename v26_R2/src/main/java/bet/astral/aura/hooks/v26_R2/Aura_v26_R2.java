@@ -1,11 +1,10 @@
-package bet.astral.aura.hooks.v26;
+package bet.astral.aura.hooks.v26_R2;
 
 import bet.astral.aura.api.AuraInternal;
 import bet.astral.aura.api.color.GlowColor;
 import bet.astral.aura.api.color.VanillaGlowColor;
 import bet.astral.aura.api.user.AuraUser;
 import bet.astral.aura.api.user.AuraUserProvider;
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
@@ -14,6 +13,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
+import net.minecraft.world.scores.TeamColor;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
@@ -25,17 +25,20 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-public class Aura_v26 implements AuraInternal {
-	private static final Logger log = LoggerFactory.getLogger(Aura_v26.class);
+public class Aura_v26_R2 implements AuraInternal {
+	private static final Logger log = LoggerFactory.getLogger(Aura_v26_R2.class);
 	private AuraUserProvider users = null;
 	private final Map<GlowColor, PlayerTeam> globalTeams = new HashMap<>();
 
-	public Aura_v26() {
+	public Aura_v26_R2() {
 		for (VanillaGlowColor color : VanillaGlowColor.values()) {
 			Scoreboard scoreboard = new Scoreboard();
 			PlayerTeam team = new PlayerTeam(scoreboard, "g_" + color.getTeamName());
-			team.setColor(ChatFormatting.getByCode(color.asVanillaColor().getCode()));
+			// Why change for ChatFormatting to this...
+			TeamColor teamColor = TeamColor.byName(color.asVanillaColor().getName());
+			team.setColor(Optional.of(teamColor));
 			globalTeams.put(color, team);
 		}
 	}
